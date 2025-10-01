@@ -4,8 +4,10 @@ import Sidebar from "./_components/_sidebar/Sidebar";
 
 export default function LayoutDashboard({
     children,
+    locations,
 }: Readonly<{
     children: React.ReactNode;
+    locations: React.ReactNode;
 }>) {
     return (
         <div className="bg-orange-50">
@@ -13,6 +15,7 @@ export default function LayoutDashboard({
             <div className="flex flex-row">
                 <Sidebar />
                 {children}
+                {locations}
             </div>
         </div>
     );

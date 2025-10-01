@@ -1,13 +1,21 @@
-// app/dashboard/page.tsx
-export default function DashboardPage() {
-    return (
-        <div className="flex h-full w-full">
-            <div className="h-full w-1/2 bg-red-100 p-4">
-                <p>Hola soy section 1</p>
-            </div>
-            <div className="h-full w-1/2 bg-red-100 p-4">
-                <p>Hola soy section 2</p>
-            </div>
-        </div>
-    );
+import EmployeesLocation from "./@locations/_components/EmployeesLocation";
+
+export default function DashboardPage({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | string[] | undefined };
+}) {
+  return (
+    <div className="h-full w-4/12">
+      <div className="h-[90vh] overflow-hidden overflow-y-auto first:mt-0 last:mb-0">
+        {searchParams.store ? (
+          <EmployeesLocation store={searchParams.store as string} />
+        ) : (
+          <p className="w-full text-2xl px-2 text-center mt-10">
+            Selecciona una tienda para ver los empleados
+          </p>
+        )}
+      </div>
+    </div>
+  );
 }
