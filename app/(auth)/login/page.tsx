@@ -1,29 +1,37 @@
-// app/(auth)/login/page.tsx
 "use client";
 
-import { Button, Input } from "@nextui-org/react";
+import { Button, Input, Spinner } from "@nextui-org/react";
 import Link from "next/link";
 import axios from "axios";
 import { API_URL } from "@/constants";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
+    const [submitting, setSubmitting] = useState(false);
+    const router = useRouter()
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        setSubmitting(true);
         e.preventDefault();
         const formData = new FormData(e.currentTarget);
-        
+
         let authData: any = {};
         authData.userEmail = formData.get("userEmail");
         authData.userPassword = formData.get("userPassword");
 
         try {
-            const { data } = await axios.post(`${API_URL}/auth/login`, authData, {
+            const response = await axios.post(`${API_URL}/auth/login`, {
+                ...authData
+            }, { 
                 withCredentials: true,
             });
-            
-            console.log(data);
+            if (response.status === 201) router.push('/dashboard');
+            console.log(response.data);
             return;
         } catch (error) {
             console.error("Error al iniciar sesión:", error);
+        } finally {
+            setSubmitting(false);
         }
     };
 
@@ -33,30 +41,33 @@ export default function LoginPage() {
                 Iniciar sesión
             </p>
             <div className="flex flex-col gap-3 my-4">
-                <Input 
-                    label="Email" 
-                    name="userEmail" 
-                    type="email" 
-                    isRequired={true} 
-                    size="sm" 
+                <Input
+                    label="Email"
+                    name="userEmail"
+                    type="email"
+                    isRequired={true}
+                    size="sm"
+                    disabled={submitting}
                 />
-                <Input 
-                    label="Contraseña" 
-                    name="userPassword" 
-                    type="password" 
-                    isRequired={true} 
-                    size="sm" 
+                <Input
+                    label="Contraseña"
+                    name="userPassword"
+                    type="password"
+                    isRequired={true}
+                    size="sm"
+                    disabled={submitting}
                 />
             </div>
-            <div className="flex flex-col items-center gap-3">
-                <Button 
-                    color="primary" 
-                    className="w-full" 
+            <div className="flex flex-col items-center gap-2">
+                <Button
+                    color="primary"
                     type="submit"
+                    disabled={submitting}
+                    className="w-full"
                 >
-                    Iniciar sesión
+                    {submitting ? <Spinner size="md" /> : "Iniciar sesión"}
                 </Button>
-                <p className="text-white text-sm">
+                <p className="text-white">
                     ¿No tienes cuenta? <Link href="/signup" className="text-red-600 underline">Regístrate</Link>
                 </p>
             </div>
