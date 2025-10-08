@@ -19,7 +19,6 @@ export interface Employee {
     user?: any;
 }
 
-
 export interface Manager {
     managerId: string;
     managerFullName: string;
