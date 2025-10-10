@@ -1,31 +1,33 @@
-import axios from "axios";
-import { cookies } from "next/headers";
 import { Location } from "@/entities";
-import { API_URL, TOKEN_NAME } from "@/constants";
+import { API_URL } from "@/constants";
+import { authHeaders } from "@/helpers/authHeaders";
 import SelectLocation from "./_components/SelectLocation";
-import LocationCard from "./LocationCard";
+import LocationCard from "./_components/LocationCard";
 import FormNewLocation from "./_components/FormNewLocation";
 import DeleteLocationButton from "./_components/DeleteLocationButton";
+import UpdateLocation from "./_components/UpdateLocation";
+import FormUpdateLocation from "./_components/FormUpdateLocation";
 
 interface LocationsPageProps {
-  
-  searchParams: { 
-    [key: string]: string | string[] | undefined 
+  searchParams: {
+    [key: string]: string | string[] | undefined
   };
 }
 
 const LocationsPage = async ({ searchParams }: LocationsPageProps) => {
-  const userCookies = cookies();
-  const token = userCookies.get(TOKEN_NAME)?.value;
-
-  let { data } = await axios.get<Location[]>(
+  const response = await fetch(
     `${API_URL}/locations`,
     {
       headers: {
-        Authorization: `Bearer ${token}`,
+        ...authHeaders()
       },
+      next: {
+        tags: ["dashboard:locations"]
+      }
     }
   );
+
+  let data: Location[] = await response.json();
 
   data = [
     {
@@ -43,21 +45,23 @@ const LocationsPage = async ({ searchParams }: LocationsPageProps) => {
   return (
     <div className="w-7/12">
       <div className="w-full flex flex-col items-center h-[90vh] bg-red-50">
-        
+
         <div className="w-1/2 my-10">
           <SelectLocation locations={data} store={searchParams.store} />
         </div>
-        
+
         <div className="w-8/12">
           <LocationCard store={searchParams.store} />
         </div>
-        
         <div className="w-6/12">
           <FormNewLocation store={searchParams.store} />
         </div>
-
-        <DeleteLocationButton store={searchParams.store} />
-        
+        <div className="flex flex-row flex-grow-0 gap-10 items-center">
+          <DeleteLocationButton store={searchParams.store} />
+          <UpdateLocation store={searchParams.store}>
+            <FormUpdateLocation store={searchParams.store} />
+          </UpdateLocation>
+        </div>
       </div>
     </div>
   );

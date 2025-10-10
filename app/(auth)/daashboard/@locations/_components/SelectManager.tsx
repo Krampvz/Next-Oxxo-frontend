@@ -1,10 +1,25 @@
 "use client";
 import { Select, SelectItem } from "@nextui-org/react";
-import { Manager } from "@/entities";
+import { Location, Manager } from "@/entities";
 
-export default function SelectManager({ managers }: { managers: Manager[] }) {
+interface SelectManagerProps {
+    managers: Manager[];
+    locations: Location[];
+    defaultManager?: string;
+}
+
+export default function SelectManager({ managers, locations, defaultManager }: SelectManagerProps) {
+    const disabledKeys = locations
+        .map((location: Location) => location.manager?.managerId)
+        .filter((managerId) => managerId !== undefined);
+
     return (
-        <Select name="manager">
+        <Select 
+            defaultSelectedKeys={defaultManager !== undefined ? [defaultManager] : []} 
+            label="Manager" 
+            name="manager" 
+            disabledKeys={disabledKeys}
+        >
             {managers.map((manager: Manager) => {
                 return (
                     <SelectItem key={manager.managerId}>

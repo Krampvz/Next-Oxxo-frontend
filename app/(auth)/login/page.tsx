@@ -2,7 +2,6 @@
 
 import { Button, Input, Spinner } from "@nextui-org/react";
 import Link from "next/link";
-import axios from "axios";
 import { API_URL } from "@/constants";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -10,6 +9,7 @@ import { useRouter } from "next/navigation";
 export default function LoginPage() {
     const [submitting, setSubmitting] = useState(false);
     const router = useRouter()
+    
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         setSubmitting(true);
         e.preventDefault();
@@ -20,14 +20,17 @@ export default function LoginPage() {
         authData.userPassword = formData.get("userPassword");
 
         try {
-            const response = await axios.post(`${API_URL}/auth/login`, {
-                ...authData
-            }, { 
-                withCredentials: true,
+            const response = await fetch(`${API_URL}/auth/login`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(authData),
+                credentials: 'include',
             });
+            
             if (response.status === 201) router.push('/dashboard');
-            console.log(response.data);
-            return;
+            
         } catch (error) {
             console.error("Error al iniciar sesión:", error);
         } finally {
