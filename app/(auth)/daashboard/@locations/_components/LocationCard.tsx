@@ -1,21 +1,26 @@
-import axios from "axios";
 import { Card, CardHeader, CardBody, Divider } from "@nextui-org/react";
 import { authHeaders } from "@/helpers/authHeaders";
 import Link from "next/link";
 import { API_URL } from "@/constants";
 import { Location } from "@/entities";
 
-export default async function LocationCard({ store }: { store: string | string[] | undefined }) {
+export default async function LocationCard({
+  store,
+}: {
+  store: string | string[] | undefined;
+}) {
   if (!store) return null;
-  
-  const { data } = await axios.get<Location>(
-    `${API_URL}/locations/${store}`,
-    {
-      headers: {
-        ...authHeaders()
-      }
+
+  const response = await fetch(`${API_URL}/locations/${store}`, {
+    headers: {
+      ...authHeaders()
+    },
+    next: {
+      tags: ["dashboard:locations", `dashboard:locations:${store}`]
     }
-  );
+  });
+
+  const data: Location = await response.json();
 
   return (
     <Card>
@@ -25,11 +30,20 @@ export default async function LocationCard({ store }: { store: string | string[]
       <Divider />
       <CardBody className="flex flex-col w-full items-center">
         <p className="w-full">
-          Manager:
-          <Link href={{ pathname: '/dashboard/managers' }}>
+          Manager:{" "}
+          <Link href={{ pathname: `/dashboard/managers/${data.manager?.managerId}` }}>
             <b>{data.manager?.managerFullName}</b>
           </Link>
         </p>
+        <p className="w-full">
+          Dirección: <b>{data.locationAddress}</b>
+        </p>
+        <iframe
+          className="border-2 border-orange-800 rounded-md my-2"
+          width="300"
+          height="200"
+          src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyAz0Y6dhhUV1eZmt7-H4P010QWCSEz3LBg&q=${data.locationLatLng[0]},${data.locationLatLng[1]}`}
+        />
       </CardBody>
     </Card>
   );
