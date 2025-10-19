@@ -3,7 +3,7 @@ import { Modal, ModalContent, ModalBody, Button, useDisclosure } from '@nextui-o
 import { LuPlus } from 'react-icons/lu';
 import CreateProviderForm from './CreateProviderForm';
 
-export default function CreateProviderModal() {
+export default function CreateProvider() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   return (
