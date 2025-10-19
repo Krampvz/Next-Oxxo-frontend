@@ -3,7 +3,7 @@ import { Provider } from "@/entities";
 import { authHeaders } from "@/helpers/authHeaders";
 import Link from "next/link";
 import ProviderCard from "./_components/ProviderCard";
-import CreateProviderModal from "./_components/CreateProviderModal";
+import CreateProviderModal from "./_components/CreateProvider";
 
 const ProviderPage = async () => {
     const response = await fetch(`${API_URL}/providers`, {
