@@ -4,20 +4,30 @@ import { API_URL } from "@/constants";
 import { authHeaders } from "@/helpers/authHeaders";
 import { revalidateTag } from "next/cache";
 
-export default async function createManager(formData: FormData) {
-  let manager: any = {};
-  Array.from(formData.keys()).forEach((key) => {
-    manager[key] = formData.get(key);
-  });
+export default async function createProduct(formData: FormData) {
+  let product: any = {};
+  
 
-  const response = await fetch(`${API_URL}/managers`, {
+  for (const key of Array.from(formData.keys())) {
+    if (!key.includes("$ACTION_ID")) {
+      product[key] = formData.get(key);
+    }
+  }
+
+
+  product.price = +product.price;
+  product.countSeal = +product.countSeal;
+
+  const response = await fetch(`${API_URL}/product`, {
     method: "POST",
-    body: JSON.stringify(manager),
+    body: JSON.stringify(product),
     headers: {
       ...authHeaders(),
-      'content-type': "application/json",
+      'content-type': 'application/json'
     },
   });
 
-  if (response.status === 201) revalidateTag("dashboard:managers");
+  console.log(await response.json()); 
+
+  if (response.status === 201) revalidateTag("dashboard:products");
 }

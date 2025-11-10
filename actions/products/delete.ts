@@ -3,7 +3,7 @@ import { authHeaders } from "@/helpers/authHeaders";
 import { revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 
-export default async function deleteProduct(productId: string, formData: FormData) {
+export default async function deleteProduct(productId: string) {
     const response = await fetch(`${API_URL}/products/${productId}`, {
         method: "DELETE",
         headers: {

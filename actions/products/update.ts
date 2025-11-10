@@ -5,9 +5,14 @@ import { redirect } from "next/navigation";
 
 export default async function updateProduct(productId: string, formData: FormData) {
     let product: any = {};
-    for (const key of Array.from(formData.keys())) {
-        product[key] = formData.get(key);
+    for (const key of formData.keys()) {
+        if (!key.includes("$ACTION_ID")) {
+            product[key] = formData.get(key);
+        }
     }
+
+    product.price = +product.price;
+    product.countSeal = +product.countSeal;
 
     const response = await fetch(`${API_URL}/products/${productId}`, {
         method: "PATCH",
@@ -17,6 +22,8 @@ export default async function updateProduct(productId: string, formData: FormDat
             'content-type': "application/json"
         },
     });
+
+    console.log(await response.json());
 
     if (response.status === 200) {
         revalidateTag("dashboard:products");
